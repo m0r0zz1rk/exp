@@ -1,0 +1,21 @@
+{% include 'base.html' %}
+{% block body %}
+<center><p class="text-start">{{ title }}</p></center>
+<center><p class="text-start">Количество периодов: {{ count }} <a href="{% url 'new_period' %}">Внести новый период</a></p></center>
+<table class="table_criteria" align="center">
+<tr>
+  <th width="25%">Название</th>
+  <th width="25%">Дата начала</th>
+  <th width="25%">Дата окончания</th>
+  <th width="25%">Удаление</th>
+</tr>
+{% for el in periods %}
+  <tr>
+	<td><a href="/edit_period/{{ el.id }}">{{ el.name_period }}</a></td>
+	<td>{{ el.date_start }}</td>
+	<td>{{ el.date_end }}</td>
+	<td><a href="/delete_period/{{ el.id }}" onclick="return confirm('Вы действительно хотите удалить период?') ? true : false;">Удалить</a></td>
+  </tr>
+{% endfor %}
+</table>
+{% endblock %}

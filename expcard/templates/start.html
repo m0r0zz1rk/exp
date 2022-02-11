@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <center><p class="text-start">
+  {% if success is None %}
+  Главная страница<br>Выберите нужный пункт навигационного меню в
+    верхней части страницы
+  {% else %}
+    {{ success }}
+  {% endif %}
+  </p></center>
+{% endblock %}

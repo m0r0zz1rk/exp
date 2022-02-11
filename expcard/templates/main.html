@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if error is not None %}
+        <center><p class="text-start">{{ error }}</p></center>
+    {% else %}
+        <center><p class="text-start">Новая карта</p></center>
+    {% endif %}
+    <div class="form">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <center>
+        <table width="30%">
+            <tr>
+                <td><center>Код аттестуемого<br>(формат: XXXX-XX-X...)</center></td>
+				<td><center>
+				{% if curr_group == 'Специалист' or curr_group == 'Уполномоченный' %}
+					{% if gos is None %}
+					<select class="inp-select" name="att_code">
+						{% for el in atts %}
+							<option>{{ el }}</option>
+						{% endfor %}
+					</select>
+					{% else %}
+						<input type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{1,17}" maxlength="25" class="check_patt"
+							   name="att_code" required>
+					{% endif %}		   
+                {% else %}
+						<input type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{1,17}" maxlength="25" class="check_patt"
+							   name="att_code" required>   
+                {% endif %}
+				</center></td>
+            </tr>
+            <tr>
+                <td><center>Этап всестороннего анализа</center></td>
+                <td><center>
+                    {% if curr_group == 'Аттестация' %}
+                        <select class="inp-select" name="Level_expert">
+                            <option selecred>Оператор</option>
+                        </select>
+                    {% else %}
+                        <select class="inp-select" name="Level_expert">
+                            {% for el in lvls %}
+                                {% if el.name_level == 'Оператор' and curr_group != 'Специалист' and curr_group != 'Уполномоченный'%}
+                                    <option>{{ el }}</option>
+                                {%  endif %}
+                                {% if el.name_level != 'Оператор' %}
+                                    <option>{{ el }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                    </center>
+                </td>
+            </tr>
+            {% if curr_group != 'Специалист' and curr_group != 'Уполномоченный' %}
+            <tr>
+                <td><center>Тип карты оператора</center></td>
+                <td><center>
+                    <select class="inp-select" name="operator_choice">
+                        <option>Муниципалитет</option>
+                        <option>Гос</option>
+                    </select>
+                    </center>
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><center>Результат всестороннего анализа</center></td>
+                <td><center>
+                    <select class="inp-select" name="Result">
+                        <option>Установить</option>
+                        <option>Отказать</option>
+                    </select>
+                    </center>
+                </td>
+            </tr>
+        </table>
+        <br><button type="submit">Отправить карту</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

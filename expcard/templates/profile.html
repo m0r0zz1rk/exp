@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block body %}
+<center><p class="success">Профиль пользователя</p></center>
+  <form method="post">
+    {% csrf_token %}
+    <table align="center">
+      <tr>
+        <td align="right">Группа доступа</td>
+        <td><input type="text" value="{{ curr_group }}" class="inp-text-title" name="group" disabled></td>
+      </tr>
+      <br>
+      <tr>
+        <td align="right">Логин</td>
+        <td><input type="text" value="{{ curr_user }}" class="inp-text-title" name="login" disabled></td>
+      </tr>
+      <tr>
+        <td align="right">Электронная почта</td>
+        <td><input type="text" value="{{ curr_mail }}" class="inp-text-title" name="email" required></td>
+      </tr>
+    </table><br>
+    <center><button type="submit">Изменить данные</button></center>
+  </form>
+{% endblock %}

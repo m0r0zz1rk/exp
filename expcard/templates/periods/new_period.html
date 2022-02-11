@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if error is not None %}
+        <center><p class="text-start">{{ error }}</p></center>
+    {% else %}
+        <center><p class="text-start">Новый период</p></center>
+    {% endif %}
+    <div class="form">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <center>
+        <table>
+            <tr>
+                <td align="right">Наименование:</td>
+                <td><input type="text" name="name" required></td>
+            </tr>
+            <tr>
+                <td align="right">Дата начала:</td>
+                <td><input type="date" name="date_start" required></td>
+            </tr>
+			<tr>
+                <td align="right">Дата окончания:</td>
+                <td><input type="date" name="date_end" required></td>
+            </tr>
+		</table>
+        <br><button type="submit">Добавить период</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

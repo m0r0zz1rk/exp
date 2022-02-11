@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if title is not None %}
+        <center><p class="text-start">{{ title }}</p></center>
+    {% endif %}
+    <center><p class="text-start">Новый уполномоченный</p></center>
+    <div class="form">
+    <form method="POST">
+        {% csrf_token %}
+    <center>
+      <table>
+          <tr>
+              <td align="right">Период работы:</td>
+              <td align="center">
+                <input type="text" value="{{ period.name_period }}" class="inp-text-title" name="period" disabled>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">МО:</td>
+              <td align="center">
+                    <select class="inp-select" name="mo">
+                        {% for el in mo %}
+                          <option>{{ el.name_MO }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+          </tr>
+          <tr>
+              <td align="right">ФИО:</td>
+              <td align="center">
+                <input type="text" value="" class="inp-text-title" name="fio" required>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">ОО:</td>
+              <td align="center">
+                <input type="text" value="" class="inp-text-title" name="org" required>
+              </td>
+          </tr>
+		 <tr>
+			<td align="right">Электронная почта:</td>
+			  <td align="center">
+				<input type="email" value="" class="inp-text-title" name="email" required>
+			  </td>
+		 </tr>
+      </table>
+      <br><button type="submit">Добавить уполномоченного</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

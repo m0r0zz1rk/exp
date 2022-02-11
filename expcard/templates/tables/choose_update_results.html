@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+<center><p class="text-start">Периоды не найдены</p></center>
+{% else %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <center><p class="text-start">Выберите период для обновления результатов</p></center>
+    <table align="center">
+        <tr>
+            <td align="center" width="10%">Период:</td>
+            <td align="center" width="50%">
+                <select class="inp-select" name="period">
+                   {% for el in periods %}
+				      <option value="{{ el.id }}">{{ el.name_period }} ({{ el.date_start }} - {{ el.date_end }})</option>
+				   {% endfor %}
+                </select>
+            </td>
+    </table>
+    <br><center><button type="submit">Обновить результаты</button></center>
+</form>
+{% endif %}
+{% endblock %}

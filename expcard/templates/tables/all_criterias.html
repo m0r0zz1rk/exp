@@ -1,0 +1,93 @@
+{% include 'base.html' %}
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Замечания специалистов по критериям не найдены</p></center>
+{% else %}
+  <center><p class="text-start">Замечания специалистов по критериям за период "{{ period.name_period }}"</p></center>
+  <p class="text-start" align="center">Найдено замечаний: {{ count }}</p>
+  <p class="text-start" align="center"><a href="/admin/expcard/criteria_export/export/?period={{ period.id }}" target="_blank">Экспорт замечаний</a></p><br>
+  <table align="center">
+	<tr>
+      <td width="40%"><table><tr>
+		  <form method="POST" action="{% url 'find_criterias' %}">
+			{% csrf_token %}
+		  <td width="16%" align="center">Поиск<input type="hidden" value="{{ period.id }}" name="per"></td>
+		  <td width="16%" align="center">
+			<select class="inp-select" name="field">
+				<option>МО специалиста</option>
+				<option>ФИО специалиста</option>
+				<option>МО аттестуемого</option>
+				<option>ФИО аттестуемого</option>
+			</select>
+		  </td>
+		  <td width="16%" align="center"><input type="text" class="inp-text-title" name="value" required></td>
+		  <td width="16%" align="center"><button type="submit">Найти</button></td>
+		  </form>
+      </tr></table></td>
+	  {% if find is None %}
+	  <td width="15%" align="center">
+		{% if criterias.has_previous %}
+			{% if order_by is not None %}
+				<a href="/all_criterias/{{ period.id }}?page={{ criterias.previous_page_number }}&order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/all_criterias/{{ period.id }}?page={{ criterias.previous_page_number }}"><</a>
+			{% endif %}
+		{% else %}
+		  <
+		{% endif %}
+	  </td>
+	  <td width="10%" align="center">
+		{% if order_by is not None %}
+			<form  class="pages" action="/all_criterias/{{ period.id }}">
+				<input type="hidden" value="{{ order_by }}" name="order_by">
+				Страница <input type="number" value="{{ criterias.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ criterias.paginator.num_pages }}
+			</form>
+		{% else %}
+			<form class="pages "action="/all_criterias/{{ period.id }}">
+				Страница <input type="number" value="{{ criterias.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ criterias.paginator.num_pages }}
+			</form>
+		{% endif %}
+	  </td>
+	  <td width="15%" align="center">
+		{% if criterias.has_next %}
+			{% if order_by is not None %}
+				<a href="/all_criterias/{{ period.id }}?page={{ criterias.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/all_criterias/{{ period.id }}?page={{ criterias.next_page_number }}">></a>
+			{% endif %}
+		{% else %}
+		  >
+		{% endif %}
+	  </td>
+	  {% endif %}
+  </tr></table>
+  <table class="table_res_spec">
+    <tr>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=MO_spec">МО специалиста</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=FIO_spec">ФИО специалиста</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=Position_spec">Должность специалиста</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=MO_att">МО аттестуемого</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=FIO_att">ФИО аттестуемого</th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=Position_att">Должность аттестуемого</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=Category">Заявленная категория</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=Result">Результат аттестации</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=criteria">Критерий</a></th>
+      <th width="8%"><a href="/all_criterias/{{ period.id }}?page={{ criterias.number }}&order_by=info">Замечание специалиста</a></th>
+    </tr>
+    {% for el in criterias %}
+      <tr>
+        <td>{{ el.MO_spec }}</td>
+        <td>{{ el.FIO_spec }}</td>
+        <td>{{ el.Position_spec }}</td>
+        <td>{{ el.MO_att }}</td>
+        <td>{{ el.FIO_att }}</td>
+        <td>{{ el.Position_att }}</td>
+        <td>{{ el.Category }}</td>
+        <td>{{ el.Result }}</td>
+        <td>{{ el.criteria}}</td>
+        <td>{{ el.info }}</td>
+      </tr>
+	{% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

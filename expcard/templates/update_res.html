@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<p class="success">
+    {% if error is None %}
+        Таблицы обновлены<br>
+        Переход на главную страницу через несколько секунд...</p>
+        <meta http-equiv="refresh" content="3; URL=/">
+    {% else %}
+        {{ error }}
+    {% endif %}
+
+{% endblock %}

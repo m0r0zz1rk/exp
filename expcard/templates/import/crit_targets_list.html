@@ -1,0 +1,35 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Замечания не найдены</p></center>
+{% else %}
+  <center><p class="text-start">Замечания по критериям</p></center>
+  <table class="table_res_spec">
+	<tr>
+	  <th width="20%">Аттестуемый (Код)</th>
+	  <th width="10%">Критерий</th>
+	  <th width="70%">Замечание</th>
+	</tr>
+    {% for el in crits %}
+      <tr>
+        <td>
+			{% for key,value in voc_certs.items %}
+				{% if key == el.cert_id %}
+					{{ value }}
+				{% endif %}
+			{% endfor %}
+		</td>
+        <td>
+			{% for key,value in voc_crits.items %}
+				{% if el.criteria_id == key %}
+					{{ value }}
+				{% endif %}
+			{% endfor %}
+		</td>
+        <td>{{ el.info }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

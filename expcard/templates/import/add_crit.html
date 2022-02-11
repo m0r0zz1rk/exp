@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if title is not None %}
+        <center><p class="text-start">{{ title }}</p></center>
+    {% endif %}
+    <center><p class="text-start">Новое замечание по критерию</p></center>
+    <div class="form">
+    <form method="POST">
+        {% csrf_token %}
+    <center>
+      <table>
+          <tr>
+              <td align="right">Специалист:</td>
+              <td align="center" width="700px">
+                <input type="text" value="{{ spec.FIO }}" class="inp-text-title" disabled>
+              </td>
+          </tr>
+		  <tr>
+              <td align="right">Аттестуемый:</td>
+              <td align="center" width="700px">
+                <input type="text" value="{{ cert.FIO }}" class="inp-text-title" disabled>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">Критерий:</td>
+              <td align="center" width="700px">
+                    <select class="inp-select" name="crit">
+                        {% for el in criterias %}
+                          <option value="{{ el.id }}">{{ el.name_criteria }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+          </tr>
+          <tr>
+              <td align="right">Замечание:</td>
+              <td align="center" width="700px">
+                <textarea rows="15" name="info"></textarea>
+              </td>
+          </tr>
+      </table>
+      <br><button type="submit">Добавить замечание</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

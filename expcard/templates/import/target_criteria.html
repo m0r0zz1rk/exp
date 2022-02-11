@@ -1,0 +1,98 @@
+{% include 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+	<center><p class="text-start">Замечания не найдены</p></center>
+{% else %}
+	{% if curr_group != 'Уполномоченный' %}
+  		<center><p class="text-start">Замечания по критериям для аттестуемого: {{ cert.FIO }}</p></center>
+	{% else %}
+		<center><p class="text-start">Замечания по критериям</p></center>
+	{% endif %}
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%" align="left">Найдено замечаний: {{ count }}</td>
+	  {% if curr_group != 'Уполномоченный' %}
+      <td width="40%" align="right"><a href="/new_crit_operator/{{ cert.id }}">Добавить замечание</a></td>
+	  {% endif %}
+	</tr> 
+  </table>
+  <table class="table_res_spec">
+    <tr>
+      <th width="10%">Критерий</th>
+      <th width="70%">Замечание специалиста</th>
+	  {% if curr_group != 'Уполномоченный' %}
+	  <th width="10%">Отправлено уполномоченному</th>
+	  {% endif %}
+      <th width="10%">Удаление замечания</th>
+    </tr>
+    {% for el in crits %}
+	<tr>
+		<td>
+			{% if curr_group != 'Уполномоченный' %}
+				{{ el.criteria }}<br>
+				{% for s in specs %}
+					{% if el.spec_id == s.id %}
+						{{ s.FIO }}
+					{% endif %}
+				{% endfor %}
+			{% else %}
+				{{ el.criteria }}
+			{% endif %}
+		</td>
+		{% if curr_group != 'Уполномоченный' %}
+			<td>
+				<form action="{% url 'change_targets_criteria' %}" method="POST">
+					{% csrf_token %}
+					<input type="hidden" value="{{ specid }}" name="specid">
+					<input type="hidden" value="{{ certid }}" name="certid">
+					<input type="hidden" value="{{ el.id }}" name="rec_id">
+					<textarea rows="3" name="new_info" onchange="this.form.submit()">{{ el.info }}</textarea>
+				</form>
+			</td>
+			<td>
+				{% if el.to_deleg == 0 %}
+					Нет
+				{% else %}
+					Да
+				{% endif %}
+			</td>
+		{% else %}
+			<td>{{ el.info }}</td>
+		{% endif %}
+		<td>
+		<a href="/delete_crit_target/{{ el.id }}"
+           onclick="return confirm('Вы действительно хотите удалить замечание?') ? true : false;">
+        Удалить</a>
+		</td>
+	</tr>
+    {% endfor %}
+  </table><br>
+	{% if curr_group != 'Уполномоченный' %}
+	<form action="/targets_operator/{{ cert.id }}" method="POST">
+		{% csrf_token %}
+		<center>
+			<table>
+				<tr>
+					<td>
+						Итоговый результат:
+					</td>
+					<td width="500px">
+						<select name="res">
+							{% for r in res %}
+								{% if r == cert.result %}
+									<option selected>{{ r }}</option>
+								{% else %}
+									<option>{{ r }}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</td>
+				</tr>
+			</table>
+		</center><br>
+		<center><button type="submit">Отправить уполномоченному</button></center>
+	</form>
+{% endif %}
+{% endif %}
+{% endblock %}

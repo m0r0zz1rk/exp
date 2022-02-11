@@ -1,0 +1,21 @@
+{% include 'base.html' %}
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Записи не найдены</p></center>
+{% else %}
+  <center><p class="text-start">{{ title }}</p></center>
+  <p class="text-start">Общее количество записей: {{ count }}</p>
+  <table class="table_criteria" align="center">
+    <tr>
+      <th width="10%">Критерий</th>
+      <th width="78%">Замечание</th>
+    </tr>
+    {% for el in records %}
+      <tr>
+        <td>{{ el.criteria }}</td>
+        <td align="left">{{ el.info }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+    <center><p class="text-start">{{ title }}</p></center>
+{% else %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <center><p class="text-start">Выберите параметры списка:</p></center>
+    <table align="center">
+		<tr>
+            <td align="right" width="10%">Тип:</td>
+            <td align="center" width="50%">
+                <select class="inp-select" name="type">
+                    <option>Аттестуемые</option>
+                    <option>Специалисты</option>
+                    <option>Уполномоченные</option>
+                </select>
+            </td>
+		</tr>
+        <tr>
+            <td align="right" width="10%">Период:</td>
+            <td align="center" width="50%">
+                <select class="inp-select" name="period">
+                    {% for el in periods %}
+                        <option value="{{ el.id }}">{{ el.name_period }} ({{ el.date_start }} - {{ el.date_end }})</option>
+                    {% endfor %}
+                </select>
+            </td>
+		</tr>
+    </table>
+    <br><center><button type="submit">Показать список</button></center>
+</form>
+{% endif %}
+{% endblock %}

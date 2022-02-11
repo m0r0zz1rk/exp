@@ -1,0 +1,17 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+  <center><p class="text-start">{{ title }}</p></center>
+  <table class="table_res_spec">
+	<tr>
+	  <th width="25%">Наименование</th>
+	  <th width="25%">Количество</th>
+	</tr>
+    {% for key, value in voc.items %}
+      <tr>
+        <td>{{ key }}</td>
+		<td>{{ value }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

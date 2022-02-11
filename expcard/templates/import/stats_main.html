@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    {% load static %}
+    <title>Электронный мониторинг деятельности специалистов, осуществляющих процедуру всестороннего
+        анализа профессиональной деятельности педагогических работников</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <style>
+    table {
+      font-family: Circe;
+      font-size: 14pt;
+    }
+	.table_res_spec th a:link, .table_res_spec th a:visited {
+	 text-decoration: none;
+	 color: #ebebec;
+	}
+    .table_res_spec {
+	  width: 100%;
+      border-collapse: collapse;
+      align: center;
+      font-family: Circe;
+      font-size: 14pt;
+      text-align: center;
+    }
+    .table_res_spec th {
+      background-color: #373c59;
+      color: #ebebec;
+      position: -webkit-sticky;
+      position: -moz-sticky;
+      position: -ms-sticky;
+      position: -o-sticky;
+      position: sticky;
+      top: 0px;
+      border-bottom: 2px solid #373c59;
+      padding: 10px 8px;
+    }
+    .table_res_spec tr:hover td {
+        background: #e8edff;
+    }
+    .table_res_spec td {
+      border-bottom: 1px solid #ccc;
+      padding: 9px 8px;
+      transition: .3s linear;
+    .text-start {
+      font-family: Circe;
+      font-size: 14pt;
+    }
+    @font-face {
+        font-family: Circe;
+        src: local('Circe'),
+        url('{% static 'fonts/circe.ttf' %}') format("truetype");
+    }
+    @font-face {
+        font-family: Circe-Bold;
+        src: local('Circe Bold'),
+        url('{% static 'fonts/circe-bold.ttf' %}') format("truetype");
+    }
+    .check_patt:invalid {border-color: red;}
+    .check_patt:valid {border-color: green;}
+    </style>
+    <script>setTimeout(function() { $('.box').fadeOut('fast') } ,3000);</script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js"
+            type="text/javascript"></script>
+</head>
+<body>
+  <table class="table_res_spec">
+	<tr>
+	  <th>МО</th>
+	  {% for el_p in pos  %}
+		<th>{{ el_p }}</th>
+	  {% endfor %}
+	</tr>
+	{% for el_m in mo  %}
+		<tr>
+			<td>{{ el_m }}</td>
+			{% for el_p in pos %}
+				{% for key, value in voc.items %}
+					{% if el_p == key %}
+						{% for key_in, value_in in value.items %}
+							{% if el_m == key_in %}
+								<td>{{ value_in }}</td>
+							{% endif %}
+						{% endfor %}	
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

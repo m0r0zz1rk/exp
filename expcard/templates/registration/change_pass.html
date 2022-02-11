@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<center><p class="text-start">Смена пароля для специалиста "{{ spec.FIO }}"</p></center>
+{% if error is not None %}
+<br><center><p class="text-start">{{ error }}</p></center><br>
+{% endif %}
+<form method="post">
+  {% csrf_token %}
+    <table align="center">
+        <tr>
+            <td align="right">Пароль:</td>
+            <td align="left"><input type="password" name="pass" required></td>
+        </tr>
+        <tr>
+            <td align="right">Подтверждение:</td>
+            <td align="left"><input type="password" name="pass2" required></td>
+        </tr>
+    </table>
+    <center><button type="submit">Сменить пароль</button></center><br>
+</form>
+{% endblock %}

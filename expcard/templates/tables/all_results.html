@@ -1,0 +1,77 @@
+{% include 'base.html' %}
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Результаты не найдены</p></center>
+{% else %}
+  <center><p class="text-start">{{ title }}</p></center>
+  <center><p class="text-start">Найдено записей: {{ count }}
+  <center><p class="text-start"><a href="/admin/expcard/summary_table/export/?period={{ period.id }}type_MO={{ title }}" target="_blank">Экспорт</a></p></center>
+  <form method="POST" action="/find_results/{{ period.id }}_{{ title }}">
+    {% csrf_token %}
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%"><table><tr>
+      <td width="16%" align="center">Поиск по ФИО:</td>
+      <td width="16%" align="center"><input type="text" class="inp-text-title" name="FIO" required></td>
+      <td width="16%" align="center"><button type="submit">Найти</button></td>
+      </tr></table></td>
+    {% if results.number is not None %}
+      <td><table align="center"><tr>
+            <td width="5%" align="right">
+              {% if results.has_previous %}
+				{% if order_by is not None %}
+					<a href="/all_results/{{title}}_{{ period.id }}_{{ results.previous_page_number }}?order_by={{ order_by }}"><</a>
+				{% else %}
+					<a href="/all_results/{{title}}_{{ period.id }}_{{ results.previous_page_number }}"><</a>
+				{% endif %}
+              {% else %}
+                <
+              {% endif %}
+            </td>
+            <td width="50%" align="center">
+              Страница {{ results.number }} из {{ results.paginator.num_pages }}
+            </td>
+            <td width="5%" align="left">
+              {% if results.has_next %}
+				{% if order_by is not None %}
+					<a href="/all_results/{{title}}_{{ period.id }}_{{ results.next_page_number }}?order_by={{ order_by }}">></a>
+				{% else %}
+					<a href="/all_results/{{title}}_{{ period.id }}_{{ results.next_page_number }}">></a>
+				{% endif %}
+              {% else %}
+                >
+              {% endif %}
+            </td>
+          </tr></table></td>
+    </tr></table>
+  {% endif %}
+  </form>
+  <table class="table_res_spec">
+    <tr>
+      <th width="11%">ФИО эксперта</th>
+      <th width="11%">Этап всестороннего анализа</th>
+      <th width="11%">МО эксперта</th>
+      <th width="11%">Должность эксперта</th>
+      <th width="11%"><a href="/all_results/{{title}}_{{ period.id }}_{{ results.number }}?order_by=-count">Количество экспертиз</a></th>
+      <th width="11%"><a href="/all_results/{{title}}_{{ period.id }}_{{ results.number }}?order_by=-coincidence_common">Совпадения на первом этапе</a></th>
+      <th width="11%"><a href="/all_results/{{title}}_{{ period.id }}_{{ results.number }}?order_by=-coincidence_general">Совпадения на втором этапе</a></th>
+      <th width="11%"><a href="/all_results/{{title}}_{{ period.id }}_{{ results.number }}?order_by=-coincidence_operator">Совпадения с оператором</a></th>
+      <th width="11%"><a href="/all_results/{{title}}_{{ period.id }}_{{ results.number }}?order_by=-Percent">Результативность (%)</a></th>
+    </tr>
+    {% for el in results %}
+      <tr>
+        <td><a href="/summary_results/{{ el.FIO_expert }}_{{ period.id }}_{{ el.MO_expert_id }}_{{ el.Position_expert_id }}">
+          {{ el.FIO_expert }}</a></td>
+        <td>{{ el.Level_expert }}</td>
+        <td>{{ el.MO_expert }}</td>
+        <td>{{ el.Position_expert }}</td>
+        <td>{{ el.count }}</td>
+        <td>{{ el.coincidence_common }}</td>
+        <td>{{ el.coincidence_general }}</td>
+        <td>{{ el.coincidence_operator }}</td>
+        <td>{{ el.Percent }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

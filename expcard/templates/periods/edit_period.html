@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <center><p class="text-start">Изменение периода</p></center>
+    <div class="form">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <center>
+        <table>
+            <tr>
+                <td align="right">Наименование:</td>
+                <td><input type="text" value="{{ period.name_period }}" name="name" required></td>
+            </tr>
+            <tr>
+                <td align="right">Дата начала:</td>
+                <td><input type="date" value="{{ date_start }}" name="date_start" required></td>
+            </tr>
+			<tr>
+                <td align="right">Дата окончания:</td>
+                <td><input type="date" value="{{ date_end }}" name="date_end" required></td>
+            </tr>
+		</table>
+        <br><button type="submit">Внести изменения</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

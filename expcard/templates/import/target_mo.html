@@ -1,0 +1,26 @@
+{% include 'base.html' %}
+
+{% block body %}
+  <center><p class="text-start">Назначенные МО для уполномоченного: {{ deleg.FIO }}</p></center>
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%" align="center">Найдено назначенных МО: {{ count }}</td>
+      <td width="25%" align="center">
+          <a href="/change_target_mo/{{ deleg.id }}">Добавить</a>
+      </td>
+    </tr>
+  </table>
+  <table class="table_res_spec">
+    <tr>
+      <th width="45%">Муниципальное образование</th>
+      <th width="45%">Удалить МO из назначенных</th>
+    </tr>
+    {% for el in targs %}
+      <tr>
+        <td>{{ el.MO }}</td>
+        <td><a href="/delete_target/{{ el.id }}"
+        onclick="return confirm('Вы действительно хотите удалить специалиста?') ? true : false;">Удалить</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

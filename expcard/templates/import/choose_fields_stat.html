@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<center><p class="text-start">Выберите нужные значения:</p></center>
+{% if spec is not None %}
+<form method="POST" enctype="multipart/form-data" action="/main_stat_spec/{{ period.id }}">
+{% else %}
+<form method="POST" enctype="multipart/form-data" action="/main_stat_cert/{{ period.id }}">
+{% endif %}
+    {% csrf_token %}
+	{%if period is None%}
+		<input type="hidden" value="{{ month }}" name="month">
+		<input type="hidden" value="{{ year }}" name="year">
+	{% else %}
+		<input type="hidden" value="{{ period }}" name="period">
+	{% endif %}
+    <center><p class="text-start"></p></center>
+    <table align="center">
+        <tr>
+			<td width="15%" align="right">Выберите МО:</td>
+            <td align="center" width="30%">
+                <select class="inp-select" size="10" name="mo" multiple required>
+					{% for el in mo %}
+						<option>{{ el }}</option>
+					{% endfor %}
+                </select>
+            </td>
+		</tr>
+		<tr>
+			<td width="15%" align="right">Выберите должности:</td>
+            <td align="center" width="30%">
+                <select class="inp-select" size="10" name="pos" multiple required>
+					{% for el in pos %}
+						<option>{{ el }}</option>
+					{% endfor %}
+                </select>
+            </td>
+		</tr>
+    </table>
+    <br><center><button type="submit">Экспорт</button></center>
+</form>
+{% endblock %}

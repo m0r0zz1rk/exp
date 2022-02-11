@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if error is not None %}
+        <center><p class="text-start">{{ error }}</p></center>
+    {% else %}
+        <center><p class="text-start">Замечание по критерию</p></center>
+    {% endif %}
+    <div class="form">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <center>
+        <table>
+            <tr>
+                <td align="right">Код аттестуемого:</td>
+                <td><input type="text" value="{{ att_code }}" name="att_code" disabled></td>
+            </tr>
+            <tr>
+                <td align="right">Критерий:</td>
+                <td><center>
+                    <select class="inp-select" name="criteria">
+                        {% for el in criteria %}
+                            <option>{{ el.name_criteria }}</option>
+                        {% endfor %}
+                    </select>
+                    </center>
+                </td>
+            </tr>
+        </table>
+        <center>Замечание</center>
+        <center><textarea rows="10" name="info" required></textarea></center>
+        <br><button type="submit">Добавить замечание</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

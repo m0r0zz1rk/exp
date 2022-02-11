@@ -1,0 +1,28 @@
+{% include 'base.html' %}
+
+{% block body %}
+
+<form method="POST" enctype="multipart/form-data" action="/target_mo/{{ id }}">
+    {% csrf_token %}
+	{% if title %}
+    <center><p class="text-start">{{ title }}<br>Выберите МО для назначения:</p></center>
+	{% else %}
+	<center><p class="text-start">Выберите МО для назначения:</p></center>
+	{% endif %}
+    <table align="center">
+        <tr>
+            <td align="center">
+                <select name="mo" size="20" multiple="multiple" style="width: 90%" required>
+					{% for el in mo %}
+						{% if el.name_MO != 'Оператор' %}
+							<option>{{ el.name_MO }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+            </td>
+        </tr>
+    </table>
+    <br><center><button type="submit">Назначить</button></center>
+</form>
+
+{% endblock %}

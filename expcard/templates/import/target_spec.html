@@ -1,0 +1,41 @@
+{% include 'base.html' %}
+
+{% block body %}
+  <center><p class="text-start">Назначенные пары специалистов и аттестуемых уполномоченным: {{ deleg.FIO }}</p></center>
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%" align="center">Найдено назначений: {{ count }}</td>
+  </table>
+  <table class="table_res_spec">
+    <tr>
+      <th width="12%">ФИО специалиста</th>
+      <th width="12%">ОО специалиста</th>
+      <th width="12%">Должность специалиста</th>
+      <th width="12%">MO аттестуемого</th>
+      <th width="12%">ФИО аттестуемого</th>
+      <th width="12%">ОО аттестуемого</th>
+      <th width="12%">Должность аттестуемого</th>
+	  <th width="12%">Замечания по критериям</th>
+    </tr>
+    {% for el in targs %}
+      <tr>
+		{% for el_spec in specs %}
+			{% if el.spec_id == el_spec.id %}
+				<td>{{ el_spec.FIO }}</td>
+				<td>{{ el_spec.Organization }}</td>
+				<td>{{ el_spec.Position }}</td>
+			{% endif %}
+		{% endfor %}
+		{% for el_cert in certs %}
+			{% if el.cert_id == el_cert.id %}
+				<td>{{ el_cert.MO }}</td>
+				<td><a href="/cert_results_from_targets/{{ el_cert.id }}" target="_blank">{{ el_cert.FIO }}</a></td>
+				<td>{{ el_cert.Organization }}</td>
+				<td>{{ el_cert.Position }}</td>
+			{% endif %}
+		{% endfor %}
+        <td><a href="/targets_criteria/{{ el.spec_id }}_{{ el.cert_id }}" target="_blank">Показать</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

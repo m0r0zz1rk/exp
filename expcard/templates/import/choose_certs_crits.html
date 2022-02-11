@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+    <center><p class="text-start">Аттестуемые не найдены</p></center>
+{% else %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <center><p class="text-start">Выберите аттестуемых:</p></center>
+    <table align="center">
+		<tr>
+            <td align="right" width="10%">Аттестуемые:</td>
+            <td align="center" width="50%">
+                <select multiple class="inp-select" size="15" name="certs">
+					{% for key, value in certs.items %}
+						<option value="{{ key }}">{{ value }}</option>
+					{% endfor %}
+                </select>
+            </td>
+		</tr>
+    </table>
+    <br><center><button type="submit">Показать замечания по критериям</button></center>
+</form>
+{% endif %}
+{% endblock %}

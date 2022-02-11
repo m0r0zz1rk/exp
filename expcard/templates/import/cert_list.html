@@ -1,0 +1,197 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+  {% if count == 0 %}
+  <center><p class="text-start">Аттестуемые на период "{{ period.name_period }}" не найдены</p></center>
+{% else %}
+  {% if error|length > 0 %}
+  <center><p class="text-start">Список был добавлен не полностью. Аттестуемые, не загруженные в систему:<br><br>
+    {% for el in error %}
+      {{ el }}<br>
+    {% endfor %}
+  </p></center>
+  {% endif %}
+  {% if title is not None %}
+  <center><p class="text-start">{{ title }}<br></center>
+  {% endif %}
+  <center><p class="text-start">Аттестуемые на период "{{ period.name_period }}"<br></center>
+  <center><p class="text-start">Найдено аттестуемых: {{ count }}<br></center>
+  <table class="table_func" align="center">
+    <tr>
+      <td width="10%" align="center"><a href="/choose_cert_stats/{{ period.id }}">Статистика</a></td>
+      <td width="15%" align="center">
+          <a href="/add_cert/{{ period.id }}">Добавить аттестуемого</a>
+      </td>
+      <td width="15%" align="center">
+          <a href="/admin/expcard/certified/export/?period={{ period.id }}" target="_blank">
+          Экспорт списка</a>
+      </td>
+      <td width="15%" align="center">
+        <a href="/delete_cert_list/{{ period.id }}"
+           onclick="return confirm('Вы действительно хотите удалить список?') ? true : false;">
+        Удалить список</a>
+      </td>
+	  {% if filter %}
+	  <td width="15%" align="center">
+        <a href="/cert_post_list/{{ period.id }}">
+        Сбросить значение фильтров</a>
+      </td>
+	  {% endif %}
+      <td width="15%" align="center"><a href="/word_1kk/{{ period.id }}">Сформировать 1КК</a></td>
+      <td width="15%" align="center"><a href="/word_vkk/{{ period.id }}">Сформировать ВКК</a></td>
+    </tr>
+  </table>
+  {% if filter is None %}
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%"><table><tr>
+	  <form method="POST" action="/find_cert/{{ period.id }}">
+        {% csrf_token %}
+      <td width="16%" align="center">Поиск по ФИО:</td>
+      <td width="16%" align="center"><input type="text" class="inp-text-title" name="FIO" required></td>
+      <td width="16%" align="center"><button type="submit">Найти</button></td>
+	  </form>
+      </tr></table></td>
+    {% if cert.number is not None %}
+      <td width="40%"><table><tr>
+        <td width="15%" align="right">
+          {% if cert.has_previous %}
+			{% if order_by is not None %}
+				<a href="/cert_post_list/{{ period.id }}?page={{ cert.previous_page_number }}$order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/cert_post_list/{{ period.id }}?page={{ cert.previous_page_number }}"><</a>
+			{% endif %}
+          {% else %}
+            <
+          {% endif %}
+        </td>
+        <td width="50%" align="center">
+			{% if order_by is not None %}
+				<form class="pages" action="/cert_post_list/{{ period.id }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ cert.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ cert.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages" action="/cert_post_list/{{ period.id }}">
+					Страница <input type="number" value="{{ cert.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ cert.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+        <td width="15%" align="left">
+          {% if cert.has_next %}
+			{% if order_by is not None %}
+				<a href="/cert_post_list/{{ period.id }}?page={{ cert.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/cert_post_list/{{ period.id }}?page={{ cert.next_page_number }}">></a>
+			{% endif %}
+          {% else %}
+            >
+          {% endif %}
+        </td>
+      </tr></table></td>
+  {% endif %}
+    </tr>
+  </table>
+  {% endif %}
+  <table class="table_res_spec">
+    <tr>
+      <th width="12%">Код аттестуемого</th>
+      <th width="12%"><a href="/cert_post_list/{{ period.id }}?order_by=MO&page={{ cert.number }}">Муниципальное образование</a><a href="#mo_att"><img src="{% static 'filter.jpg' %}"></a></th>
+      <th width="12%"><a href="/cert_post_list/{{ period.id }}?order_by=FIO&page={{ cert.number }}">ФИО</a></th>
+      <th width="12%"><a href="/cert_post_list/{{ period.id }}?order_by=Organization&page={{ cert.number }}">Образовательная организация</a></th>
+      <th width="12%"><a href="/cert_post_list/{{ period.id }}?order_by=Position&page={{ cert.number }}">Должность</a><a href="#pos_att"><img src="{% static 'filter.jpg' %}"></a></th>
+      <th width="12%"><a href="/cert_post_list/{{ period.id }}?order_by=Category&page={{ cert.number }}">Категория</a></th>
+      <th width="12%">Экспертные карты</th>
+      <th width="12%">Итоговый результат</th>
+    </tr>
+    {% for el in cert %}
+      <tr>
+        <td><a href="/edit_cert/{{ el.id }}" target="_blank">{{ el.att_code }}</a><br>
+        <a href="/delete_cert/{{ el.id }}"
+        onclick="return confirm('Вы действительно хотите удалить аттестуемого?') ? true : false;">Удалить</a></td>
+        <td>{{ el.MO }}</td>
+        <td><a href="/targets_operator/{{ el.id }}">{{ el.FIO }}</a></td>
+        <td>{{ el.Organization }}</td>
+        <td>{{ el.Position }}</td>
+        <td>{{ el.Category }}</td>
+        <td>
+          <a href="/cert_results/{{ el.id }}" target="_blank">Показать</a>
+        </td>
+        <td>
+            {{ el.result }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+<div id="mo_att">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="moatt" method="POST" action="/filter_atts/{{ period.id }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+					{% if filter_mo|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="mo" size="20" multiple="multiple" required>
+					{% for el in mo%}
+						<option>{{ el }}</option>
+					{% endfor %}
+				  </select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('moatt').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+<div id="pos_att">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="posatt" method="POST" action="/filter_atts/{{ period.id }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				  {% if filter_mo|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="pos" size="20" multiple="multiple" required>
+					{% for el in pos%}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('posatt').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+{% endblock %}

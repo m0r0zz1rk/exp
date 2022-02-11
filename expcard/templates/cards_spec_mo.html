@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Карты не найдены</p></center>
+{% else %}
+  {% if info is None %}
+    <center><p class="text-start">Список экспертных карт МО</p></center>
+  {% else %}
+    <center><p class="text-start">{{ info }}</p></center>
+  {% endif %}
+  <table align="left">
+  <tr>
+  <form method="POST" action="{% url 'find_list_cards_spec' %}">
+      {% csrf_token %}
+      <td align="left">Поиск по Email:</td>
+      <td align="left"><input type="text" class="inp-text-title" name="mail" required></td>
+      <td align="left"><button type="submit">Найти</button></td>
+  </form>
+  </tr>
+  </table><br>
+  <table class="table_res_spec" align="center">
+    <tr>
+      <th width="14%">Дата добавления карты</th>
+      <th width="14%">Специалист (Электронная почта)</th>
+      <th width="14%">Код аттестуемого</th>
+      <th width="14%">Этап всестороннего анализа</th>
+      <th width="14%">Результат аттестации</th>
+    </tr>
+    {% for el in cards %}
+      <tr>
+        <td>{{ el.date_add }}</td>
+		<td>
+          {% for key, value in voc_specs.items %}
+            {% if key == el.spec_id %}
+              {{ value }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for key, value in voc_atts.items %}
+            {% if key == el.cert_id %}
+              {{ value }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        {% if curr_group.0 == 'Аттестация' %}
+        <td>{{ el.operator_choice }}</td>
+        {% endif %}
+        <td>
+          {% for lvl in lvls %}
+            {% if lvl.id == el.level_id %}
+              {{ lvl.name_level }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ el.result }} <a href="/targets_criteria/{{ el.spec_id }}_{{ el.cert_id }}">(Замечания)</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+
+{% endif %}
+{% endblock %}

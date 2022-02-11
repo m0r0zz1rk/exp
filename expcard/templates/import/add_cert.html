@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if title is not None %}
+        <center><p class="text-start">{{ title }}</p></center>
+    {% endif %}
+    <center><p class="text-start">Новый аттестуемый</p></center>
+    <div class="form">
+    <form method="POST">
+        {% csrf_token %}
+    <center>
+      <table>
+          <tr>
+              <td align="right">Период:</td>
+              <td align="center">
+                <input type="text" value="{{ period.name_period }}" class="inp-text-title" name="period" disabled>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">МО:</td>
+              <td align="center">
+                    <select class="inp-select" name="mo">
+                        {% for el in mo %}
+                          <option>{{ el.name_MO }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+          </tr>
+          <tr>
+              <td align="right">ФИО:</td>
+              <td align="center">
+                <input type="text" value="" class="inp-text-title" name="fio" required>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">ОО:</td>
+              <td align="center">
+                <input type="text" value="" class="inp-text-title" name="org" required>
+              </td>
+          </tr>
+          <tr>
+              <td align="right">Должность:</td>
+              <td align="center">
+                    <select class="inp-select" name="pos">
+                        {% for el in pos %}
+                          <option>{{ el.name_pos }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+          </tr>
+        <tr>
+              <td align="right">Категория:</td>
+              <td align="center">
+                    <select class="inp-select" name="category">
+                        {% for el in cat %}
+                          <option>{{ el.type_cat }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+	    </tr>
+		<tr>
+              <td align="right">Форма аттестации:</td>
+              <td align="center">
+                    <select class="inp-select" name="attform">
+                        {% for el in attforms %}
+                          <option value="{{ el.id }}">{{ el.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+	    </tr>
+      </table>
+      <br><button type="submit">Добавить аттестуемого</button>
+    </center>
+    </form>
+    </div>
+{% endblock %}

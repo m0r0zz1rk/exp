@@ -1,0 +1,41 @@
+{% include 'base.html' %}
+
+{% block body %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <center><p class="text-start">Загрузка списка</p></center>
+    <table align="center">
+		<tr>
+            <td align="center">Тип: </td>
+            <td align="center" width="75%">
+				<select name="type" required>
+					<option>Аттестуемые</option>
+					<option>Специалисты</option>
+					<option>Уполномоченные</option>
+				</select>
+			</td>
+        </tr>
+        <tr>
+            <td align="center">Период: </td>
+            <td align="center" width="75%">
+				<select name="period" required>
+					{% for el in periods %}
+						<option value="{{ el.id }}">{{ el.name_period }} ({{ el.date_start }}-{{el.date_end}})</option>
+					{% endfor %}
+				</select>
+			</td>
+        </tr>
+        <tr>
+            <td align="right">
+                <center>Файл со списком<br>(формат .xlsx): </center>
+            </td>
+            <td align="center">
+                <center><input type="file" name="excel" accept=".xlsx" required></center>
+            </td>
+        </tr>
+    </table>
+    <br><center><button type="submit">Загрузить список</button></center>
+</form>
+
+{% endblock %}

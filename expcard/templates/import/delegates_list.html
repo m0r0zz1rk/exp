@@ -1,0 +1,183 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+  {% if count == 0 %}
+  <center><p class="text-start">Уполномоченные на период "{{ period.name_period }}" не найдены</p></center>
+  {% else %}
+  {% if error|length > 0 %}
+  <center><p class="text-start">Список был добавлен не полностью. Уполномоченные, не загруженные в систему:<br><br>
+    {% for el in error %}
+      {{ el }}<br>
+    {% endfor %}
+  </p></center>
+  {% endif %}
+  <center><p class="text-start">Уполномоченные на период "{{ period.name_period }}"</p></center>
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%" align="center">Найдено уполномоченных: {{ count }}</td>
+      <td width="15%" align="center">
+          <a href="/add_delegate/{{ period.id }}">Добавить уполномоченного</a>
+      </td>
+      <td width="15%" align="center">
+        <a href="/delete_delegate_list/{{ period.id }}"
+           onclick="return confirm('Вы действительно хотите удалить список?') ? true : false;">
+        Удалить список</a>
+      </td>
+	  {% if filter %}
+	  <td width="15%" align="center">
+        <a href="/delegate_post_list/{{ period.id }}">
+        Сбросить значение фильтра</a>
+      </td>
+	  {% endif %}
+    </tr>
+  </table>
+  <table class="table_func" align="center">
+    <tr>
+	  <form method="POST" action="/find_delegate/{{ period.id }}">
+        {% csrf_token %}
+      <td width="40%"><table><tr>
+      <td width="16%" align="center">Поиск:</td>
+	  <td width="16%" align="center">
+		<select class="inp-select" name="field">
+			<option>ФИО</option>
+			<option>Email</option>
+		</select>
+	  </td>
+      <td width="16%" align="center"><input type="text" class="inp-text-title" name="value" required></td>
+      <td width="16%" align="center"><button type="submit">Найти</button></td>
+	   </form>
+      </tr></table></td>
+    {% if delegates.number is not None %}
+      <td width="40%"><table><tr>
+        <td width="15%" align="right">
+          {% if delegates.has_previous %}
+			{% if order_by is not None %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.previous_page_number }}&order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.previous_page_number }}"><</a>
+			{% endif %}
+          {% else %}
+            <
+          {% endif %}
+        </td>
+        <td width="50%" align="center">
+			{% if order_by is not None %}
+				<form class="pages" action="/delegate_post_list/{{ period.id }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ delegates.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ delegates.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages" action="/delegate_post_list/{{ period.id }}">
+					Страница <input type="number" value="{{ delegates.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ delegates.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+        <td width="15%" align="left">
+          {% if delegates.has_next %}
+			{% if order_by is not None %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.next_page_number }}">></a>
+			{% endif %}
+          {% else %}
+            >
+          {% endif %}
+        </td>
+      </tr></table></td>
+  {% endif %}
+    </tr>
+  </table>
+  <table class="table_res_spec">
+    <tr>
+      <th width="14%"><a href="/delegate_post_list/{{ period.id }}?page={{ delegates.number }}&order_by=MO">Муниципальное образование</a><a href="#mo_exp"><img src="{% static 'filter.jpg' %}"></a></th>
+      <th width="14%"><a href="/delegate_post_list/{{ period.id }}?page={{ delegates.number }}&order_by=FIO">ФИО</a></th>
+      <th width="14%"><a href="/delegate_post_list/{{ period.id }}?page={{ delegates.number }}&order_by=Organization">Образовательная организация</a></th>
+      <th width="14%"><a href="/delegate_post_list/{{ period.id }}?page={{ delegates.number }}&order_by=email">Электронная почта</a></th>
+      <th width="14%">Назначения</th>
+      <th width="14%">Удалить уполномоченного</th>
+    </tr>
+    {% for el in delegates %}
+      <tr>
+        <td>{{ el.MO }}</td>
+        <td><a href="/edit_delegate/{{ el.id }}" target="_blank">{{ el.FIO }}</a></td>
+        <td>{{ el.Organization }}</td>
+        <td>{{ el.email }}</td>
+        <td><a href="/target_mo/{{ el.id }}">МО</a><br><a href="/target_spec/{{ el.id }}">Аттестация</a></td>
+        <td><a href="/delete_delegate/{{ el.id }}"
+        onclick="return confirm('Вы действительно хотите удалить специалиста?') ? true : false;">Удалить</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+  <table class="table_func" align="center">
+    <tr>
+    {% if delegates.number is not None %}
+      <td width="40%"><table><tr>
+        <td width="15%" align="right">
+          {% if delegates.has_previous %}
+			{% if order_by is not None %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.previous_page_number }}&order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.previous_page_number }}"><</a>
+			{% endif %}
+          {% else %}
+            <
+          {% endif %}
+        </td>
+        <td width="50%" align="center">
+			{% if order_by is not None %}
+				<form class="pages" action="/delegate_post_list/{{ period.id }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ delegates.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ delegates.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages" action="/delegate_post_list/{{ period.id }}">
+					Страница <input type="number" value="{{ delegates.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ delegates.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+        <td width="15%" align="left">
+          {% if delegates.has_next %}
+			{% if order_by is not None %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/delegate_post_list/{{ period.id }}?page={{ delegates.next_page_number }}">></a>
+			{% endif %}
+          {% else %}
+            >
+          {% endif %}
+        </td>
+      </tr></table></td>
+  {% endif %}
+    </tr>
+  </table>
+</div>
+{% endif %}
+<div id="mo_exp">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="moexp" method="POST" action="/filter_delegates/{{ period.id }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+					{% if filter_mo|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="mo" size="20" multiple="multiple" required>
+					{% for el in mo%}
+						<option>{{ el }}</option>
+					{% endfor %}
+				  </select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('moexp').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+{% endblock %}

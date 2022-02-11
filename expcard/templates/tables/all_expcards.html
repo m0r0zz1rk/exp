@@ -1,0 +1,306 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Карты не найдены</p></center>
+{% else %}
+  {% if title and title != 'yes'%}
+	{% if cert_id is not None %}
+    <center><p class="text-start"><a href="/targets_operator/{{ cert_id }}">{{ title }}</a></p></center>
+	{% else %}
+	<center><p class="text-start">{{ title }}</p></center>
+	{% endif %}
+  {% else %}
+  <center><p class="text-start">Список экспертных карт с типом МО {{ mo }} и типом работника {{ emp }} за период "{{ period.name_period }}"</p></center>
+  {% endif %}
+  <center><p class="text-start">Найдено карт: {{ count }}</p></center>
+  {% if filter is not None %}
+  <center><p class="text-start"><a href="/admin/expcard/expcards/export/?period={{ period.id }}&type_MO={{ mo }}&type_emp={{ emp }}" target="_blank">Экспорт</a></p></center>
+    <table align="center"><tr>
+          <td width="15%" align="center">
+            {% if cards.has_previous %}
+				{% if order_by is not None %}
+					<a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.previous_page_number }}&order_by={{ order_by }}"><</a>
+				{% else %}
+					<a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.previous_page_number }}"><</a>
+				{% endif %}
+            {% else %}
+              <
+            {% endif %}
+          </td>
+          <td width="10%" align="center">
+			{% if order_by is not None %}
+				<form  class="pages" action="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ cards.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ cards.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages "action="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}">
+					Страница <input type="number" value="{{ cards.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ cards.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+          <td width="15%" align="center">
+            {% if cards.has_next %}
+				{% if order_by is not None %}
+					<a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.next_page_number }}&order_by={{ order_by }}">></a>
+				{% else %}
+					<a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.next_page_number }}">></a>
+				{% endif %}
+            {% else %}
+              >
+            {% endif %}
+          </td>
+        </tr></table>
+  {% endif %}
+ <table class="table_res_spec">
+	{% if title == 'yes' %}
+		<tr>
+		  <th width="8%">Дата добавления карты</th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=MO_expert">МО эксперта</a><a href="#mo_exp"><img src="{% static 'filter.jpg' %}"></a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=FIO_expert">ФИО эксперта</a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Name_Org_expert">Организация эксперта</a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Position_expert">Должность эксперта</a><a href="#pos_exp"><img src="{% static 'filter.jpg' %}"></a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Level_expert">Этап всестороннего анализа</a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=MO_att">МО аттестуемого</a><a href="#mo_att"><img src="{% static 'filter.jpg' %}"></a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=FIO_att">ФИО аттестуемого</th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Name_Org_att">Организация аттестуемого</a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Position_att">Должность аттестуемого</a><a href="#pos_att"><img src="{% static 'filter.jpg' %}"></a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Category">Заявленная категория</a></th>
+		  <th width="8%"><a href="/all_expcard/{{ period.id }}_{{ mo }}_{{ emp }}?page={{ cards.number }}&order_by=Result">Результат аттестации</a></th>
+		</tr>
+	{% else %}
+		<tr>
+		  <th width="8%">Дата добавления карты</th>
+		  <th width="8%">МО эксперта</th>
+		  <th width="8%">ФИО эксперта</th>
+		  <th width="8%">Организация эксперта</th>
+		  <th width="8%">Должность эксперта</th>
+		  <th width="8%">Этап всестороннего анализа</th>
+		  <th width="8%">МО аттестуемого</th>
+		  <th width="8%">ФИО аттестуемого</th>
+		  <th width="8%">Организация аттестуемого</th>
+		  <th width="8%">Должность аттестуемого</th>
+		  <th width="8%">Заявленная категория</a></th>
+		  <th width="8%">Результат аттестации</a></th>
+		</tr>
+	{% endif %}
+    {% for el in cards %}
+      <tr>
+        <td>{{ el.date_add }}</td>
+        <td>{{ el.MO_expert }}</td>
+        <td>{{ el.FIO_expert }}</td>
+        <td>{{ el.Name_Org_expert }}</td>
+        <td>{{ el.Position_expert }}</td>
+        <td>{{ el.Level_expert }}</td>
+        <td>{{ el.MO_att }}</td>
+        <td><a href="/cert_results_from_expcard/{{ el.inter_id }}" target="_blank">{{ el.FIO_att }}</a></td>
+        <td>{{ el.Name_Org_att }}</td>
+        <td>{{ el.Position_att }}</td>
+        <td>{{ el.Category }}</td>
+        <td><a href="/delete_spec_card/{{ el.inter_id }}"
+             onclick="return confirm('Вы действительно хотите удалить карту?') ? true : false;">Удалить</a>
+			{{ el.Result }}<br>
+            <a href="/show_crit_cards/{{ el.inter_id }}">Критерии</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+<div id="mo_exp">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="moexp" method="POST" action="/filter_expcards/{{ period.id }}_{{ mo }}_{{ emp }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				    {% if filter_mo_exp|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_exp|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+					{% if filter_mo_att|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_att|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="mo_exp" size="20" multiple="multiple" required>
+					{% for el in mo_exp %}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('moexp').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+<div id="pos_exp">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="posexp" method="POST" action="/filter_expcards/{{ period.id }}_{{ mo }}_{{ emp }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				  {% if filter_mo_exp|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_exp|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+					{% if filter_mo_att|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_att|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="pos_exp" size="20" multiple="multiple" required>
+					{% for el in pos_exp %}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('posexp').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+<div id="mo_att">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="moatt" method="POST" action="/filter_expcards/{{ mo }}_{{ emp }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				  {% if filter_mo_exp|length != 0 %}
+						<select hidden name="filter_mo_exp" size="2" multiple="multiple">
+					    {% for el in filter_mo_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_exp|length != 0 %}
+						<select hidden name="filter_pos_exp" size="2" multiple="multiple">
+					    {% for el in filter_pos_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+					{% if filter_mo_att|length != 0 %}
+						<select hidden name="filter_mo_att" size="2" multiple="multiple">
+					    {% for el in filter_mo_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_att|length != 0 %}
+						<select hidden name="filter_pos_att" size="2" multiple="multiple">
+					    {% for el in filter_pos_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="mo_att" size="20" multiple="multiple" required>
+					{% for el in mo_att %}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+        <a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('moatt').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+<div id="pos_att">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="posatt" method="POST" action="/filter_expcards/{{ mo }}_{{ emp }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				  {% if filter_mo_exp|length != 0 %}
+						<select hidden name="filter_mo_exp" size="2" multiple="multiple">
+					    {% for el in filter_mo_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_exp|length != 0 %}
+						<select hidden name="filter_pos_exp" size="2" multiple="multiple">
+					    {% for el in filter_pos_exp %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+					{% if filter_mo_att|length != 0 %}
+						<select hidden name="filter_mo_att" size="2" multiple="multiple">
+					    {% for el in filter_mo_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos_att|length != 0 %}
+						<select hidden name="filter_pos_att" size="2" multiple="multiple">
+					    {% for el in filter_pos_att %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="pos_att" size="20" multiple="multiple" required>
+					{% for el in pos_att %}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('posatt').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+{% endblock %}

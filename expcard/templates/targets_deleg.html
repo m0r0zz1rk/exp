@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Назначения не найдены</p></center>
+{% else %}
+  {% if info is None %}
+    <center><p class="text-start">Список Ваших назначений</p></center>
+  {% else %}
+    <center><p class="text-start">{{ info }}</p></center>
+  {% endif %}
+	<form method="POST">
+		{% csrf_token %}
+	  <td width="40%"><table><tr>
+	  <td width="16%" align="center">Поиск по e-mail:</td>
+	  <td width="16%" align="center"><input type="text" class="inp-text-title" name="value" required></td>
+	  <td width="16%" align="center"><button type="submit">Найти</button></td>
+	</form>
+  <table class="table_res_spec" align="center">
+    <tr>
+      <th width="14%">Специалист</th>
+	  <th width="14%">Аттестуемый</th>
+      <th width="14%">Удаление записи</th>
+    </tr>
+    {% for el in targs %}
+	<tr>
+		<td>
+			{% for key_s, value_s in voc_s.items %}
+				{% if key_s == el %}
+					{{ value_s }}
+				{% endif %}
+			{% endfor %}
+		</td>
+		<td>
+			{% for key_c, value_c in voc_c.items %}
+				{% if key_c == el %}
+					{{ value_c }}
+				{% endif %}
+			{% endfor %}
+		</td>
+		<td><a href="/delete_target_deleg/{{ el }}"
+             onclick="return confirm('Вы действительно хотите удалить карту?') ? true : false;">Удалить</a></td>
+	</tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}

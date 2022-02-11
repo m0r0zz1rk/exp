@@ -1,0 +1,230 @@
+{% include 'base.html' %}
+{% load static %}
+{% block body %}
+  {% if count == 0 %}
+  <center><p class="text-start">Специалисты на период "{{ period.name_period }}" не найдены</p></center>
+  {% else %}
+  {% if error|length > 0 %}
+  <center><p class="text-start">Список был добавлен не полностью. Специалисты, не загруженные в систему:<br><br>
+    {% for el in error %}
+      {{ el }}<br>
+    {% endfor %}
+  </p></center>
+  {% endif %}
+  <center><p class="text-start">Специалисты на период "{{ period.name_period }}"</p></center>
+  <table class="table_func" align="center">
+    <tr>
+      <td width="40%" align="center">Найдено специалистов: {{ count }}</td>
+	  <td width="10%" align="cetner"><a href="/choose_spec_stats/{{ period.id }}">Статистика</a></td>
+      <td width="15%" align="center">
+          <a href="/add_spec/{{ period.id }}">Добавить специалиста</a>
+      </td>
+      <td width="20%" align="center">
+        <a href="/delete_spec_list/{{ period.id }}"
+           onclick="return confirm('Вы действительно хотите удалить список?') ? true : false;">
+        Удалить список</a>
+      </td>
+	  {% if filter %}
+	  <td width="20%" align="center">
+        <a href="/spec_post_list/{{ period.id }}">
+        Сбросить значение фильтров</a>
+      </td>
+	  {% endif %}
+    </tr>
+  </table>
+  {% if filter is None %}
+  <table class="table_func" align="center">
+    <tr>
+	  <form method="POST" action="/find_spec/{{ period.id }}">
+        {% csrf_token %}
+      <td width="40%"><table><tr>
+      <td width="16%" align="center">Поиск:</td>
+	  <td width="16%" align="center">
+		<select class="inp-select" name="field">
+			<option>ФИО</option>
+			<option>Email</option>
+		</select>
+	  </td>
+      <td width="16%" align="center"><input type="text" class="inp-text-title" name="value" required></td>
+      <td width="16%" align="center"><button type="submit">Найти</button></td>
+	   </form>
+      </tr></table></td>
+    {% if specs.number is not None %}
+      <td width="40%"><table><tr>
+        <td width="15%" align="right">
+          {% if specs.has_previous %}
+			{% if order_by is not None %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.previous_page_number }}&order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.previous_page_number }}"><</a>
+			{% endif %}
+          {% else %}
+            <
+          {% endif %}
+        </td>
+        <td width="50%" align="center">
+			{% if order_by is not None %}
+				<form class="pages" action="/spec_post_list/{{ period.id }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ specs.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ specs.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages" action="/spec_post_list/{{ period.id }}">
+					Страница <input type="number" value="{{ specs.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ specs.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+        <td width="15%" align="left">
+          {% if specs.has_next %}
+			{% if order_by is not None %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.next_page_number }}">></a>
+			{% endif %}
+          {% else %}
+            >
+          {% endif %}
+        </td>
+      </tr></table></td>
+  {% endif %}
+    </tr>
+  </table>
+  {% endif %}
+  <table class="table_res_spec">
+	<tr>
+	  <th width="14%"><a href="/spec_post_list/{{ period.id }}?page={{ specs.number }}&order_by=MO">Муниципальное образование</a><a href="#mo_exp"><img src="{% static 'filter.jpg' %}"></a></th>
+	  <th width="14%"><a href="/spec_post_list/{{ period.id }}?page={{ specs.number }}&order_by=FIO">ФИО</a></th>
+	  <th width="14%"><a href="/spec_post_list/{{ period.id }}?page={{ specs.number }}&order_by=Organization">Образовательная организация</a></th>
+	  <th width="14%"><a href="/spec_post_list/{{ period.id }}?page={{ specs.number }}&order_by=Position">Должность</a><a href="#pos_exp"><img src="{% static 'filter.jpg' %}"></a></th>
+	  <th width="14%"><a href="/spec_post_list/{{ period.id }}?page={{ specs.number }}&order_by=email">Электронная почта</a></th>
+	  <th width="14%">Экспертные карты</th>
+	  <th width="14%">Удалить специалиста</th>
+	</tr>
+    {% for el in specs %}
+      <tr>
+        <td>{{ el.MO }}</td>
+        <td><a href="/edit_spec/{{ el.id }}" target="_blank">{{ el.FIO }}</a></td>
+        <td>{{ el.Organization }}</td>
+        <td>{{ el.Position }}</td>
+        <td>{{ el.email }}</td>
+        <td><a href="/spec_results/{{ el.id }}" target="_blank">Показать</a></td>
+        <td><a href="/delete_spec/{{ el.id }}"
+        onclick="return confirm('Вы действительно хотите удалить специалиста?') ? true : false;">Удалить</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+  <table class="table_func" align="center">
+    <tr>
+    {% if specs.number is not None %}
+      <td width="40%"><table><tr>
+        <td width="15%" align="right">
+          {% if specs.has_previous %}
+			{% if order_by is not None %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.previous_page_number }}&order_by={{ order_by }}"><</a>
+			{% else %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.previous_page_number }}"><</a>
+			{% endif %}
+          {% else %}
+            <
+          {% endif %}
+        </td>
+        <td width="50%" align="center">
+			{% if order_by is not None %}
+				<form class="pages" action="/spec_post_list/{{ period.id }}">
+					<input type="hidden" value="{{ order_by }}" name="order_by">
+					Страница <input type="number" value="{{ specs.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ specs.paginator.num_pages }}
+				</form>
+			{% else %}
+				<form class="pages" action="/spec_post_list/{{ period.id }}">
+					Страница <input type="number" value="{{ specs.number }}" name="page" size="5" onchange="this.form.submit()"> из {{ specs.paginator.num_pages }}
+				</form>
+			{% endif %}
+          </td>
+        <td width="15%" align="left">
+          {% if specs.has_next %}
+			{% if order_by is not None %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.next_page_number }}&order_by={{ order_by }}">></a>
+			{% else %}
+				<a href="/spec_post_list/{{ period.id }}?page={{ specs.next_page_number }}">></a>
+			{% endif %}
+          {% else %}
+            >
+          {% endif %}
+        </td>
+      </tr></table></td>
+  {% endif %}
+    </tr>
+  </table>
+</div>
+{% endif %}
+<div id="mo_exp">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="moexp" method="POST" action="/filter_specs/{{ period.id }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+					{% if filter_mo|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="mo" size="20" multiple="multiple" required>
+					{% for el in mo%}
+						<option>{{ el }}</option>
+					{% endfor %}
+				  </select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('moexp').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+<div id="pos_exp">
+      <div id="okno">
+		<center>Выберите нужные значения:</center>
+        <form id="posexp" method="POST" action="/filter_specs/{{ period.id }}">
+			{% csrf_token %}
+			<table class="table_func" align="center">
+				<tr>
+				  <td width="90%">
+				  {% if filter_mo|length != 0 %}
+						<select hidden name="filter_mo" size="2" multiple="multiple">
+					    {% for el in filter_mo %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				    {% if filter_pos|length != 0 %}
+						<select hidden name="filter_pos" size="2" multiple="multiple">
+					    {% for el in filter_pos %}
+						    <option selected>{{ el }}</option>
+					    {% endfor %}
+				        </select>
+				    {% endif %}
+				  <select name="pos" size="20" multiple="multiple" required>
+					{% for el in pos%}
+						<option>{{ el }}</option>
+					{% endfor %}
+				</select>
+				  </td>
+				</tr>  
+			</table><br>
+		<a href="#" class="close">Закрыть окно</a>
+		<a href="#" class="close" onclick="document.getElementById('posexp').submit(); return false;">Применить фильтр</a>
+	  </form>
+      </div>
+    </div>
+{% endblock %}

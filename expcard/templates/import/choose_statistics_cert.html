@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <center><p class="text-start">Выберите критерий статистики:</p></center>
+    <table align="center">
+        <tr>
+            <td align="center" width="50%">
+                <select class="inp-select" name="type">
+                    <option>Статистика по МО</option>
+                    <option>Статистика по должностям</option>
+                    <option>Общая статистика МО/Должность</option>
+                    <option>Данные по заявкам</option>
+                </select>
+            </td>
+    </table>
+    <br><center><button type="submit">Сформировать</button></center>
+</form>
+{% endblock %}

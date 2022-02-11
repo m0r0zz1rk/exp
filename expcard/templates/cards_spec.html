@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if count == 0 %}
+  <center><p class="text-start">Карты не найдены</p></center>
+{% else %}
+  {% if info is None %}
+    <center><p class="text-start">Список Ваших экспертных карт</p></center>
+  {% else %}
+    <center><p class="text-start">{{ info }}</p></center>
+  {% endif %}
+  <table class="table_res_spec" align="center">
+    <tr>
+      <th width="14%">Дата добавления карты</th>
+      <th width="14%">Код аттестуемого</th>
+      {% if curr_group.0 == 'Аттестация' %}
+        <th width="14%">Тип карты</th>
+      {% endif %}
+      <th width="14%">Этап всестороннего анализа</th>
+      <th width="14%">Результат аттестации</th>
+      <th width="14%">Замечания по критериям</th>
+      <th width="14%">Удаление записи</th>
+    </tr>
+    {% for el in cards %}
+      <tr>
+        <td>{{ el.date_add }}</td>
+        <td>
+          {% for key, value in voc.items %}
+            {% if key == el.cert_id %}
+              {{ value.att_code }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        {% if curr_group.0 == 'Аттестация' %}
+        <td>{{ el.operator_choice }}</td>
+        {% endif %}
+        <td>
+          {% for lvl in lvls %}
+            {% if lvl.id == el.level_id %}
+              {{ lvl.name_level }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ el.result }}</td>
+        <td><a href="/new_criteria/{{ el.id }}">Добавить</a><br>
+              <a href="/show_crit_recs/{{ el.cert_id }}" target="_blank">Просмотр</a></td>
+        <td><a href="/delete_spec_card/{{ el.id }}"
+             onclick="return confirm('Вы действительно хотите удалить карту?') ? true : false;">Удалить</a></td>
+      </tr>
+    {% endfor %}
+  </table>
+
+{% endif %}
+{% endblock %}

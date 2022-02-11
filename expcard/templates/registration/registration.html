@@ -1,0 +1,31 @@
+{% extends 'registration/base_auth.html' %}
+{% block body %}
+{% if error is not None %}
+    <p class="main-title">{{ error }}</p><br>
+{% else %}
+    <p class="main-title">Регистрация нового пользователя</p><br>
+{% endif %}
+<form method="post">
+  {% csrf_token %}
+    <table align="center">
+        <tr>
+            <td align="right">Придумайте имя пользователя<br>(не использовать ФИО)</td>
+            <td><input type="text" class="inp-text-title" name="username" required></td>
+        </tr>
+        <tr>
+            <td align="right">E-mail</td>
+            <td><input type="email" class="inp-text-title" name="email" required></td>
+        </tr>
+        <tr>
+            <td align="right">Пароль</td>
+            <td><input type="password" class="inp-text-title" name="password" required></td>
+        </tr>
+        <tr>
+            <td align="right">Подтверждение пароля</td>
+            <td><input type="password" class="inp-text-title" name="password2" required></td>
+        </tr>
+    </table>
+    <center><button type="submit">Зарегистрироваться</button></center>
+</form><br>
+<center><a href = "/accounts/login">На страницу входа</a></center>
+{% endblock %}
